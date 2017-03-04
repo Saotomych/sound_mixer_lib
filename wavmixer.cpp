@@ -14,6 +14,13 @@
 
 #include "wavheader.h"
 
+#define NODEBUG		0
+#define DBGLEVEL1 	1
+#define DBGLEVEL2 	2
+#define DBGLEVEL3 	3
+
+#define DEBUG	NODEBUG
+
 using namespace std;
 
 // prototype for our audio callback
@@ -233,7 +240,8 @@ class MixedSound
 	    shift += 8;
 	}
 
-	cout << "take value: " << v << endl;
+	if (DEBUG == DBGLEVEL3)
+	  cout << "take value: " << v << endl;
 	
 	return v;
     }
@@ -241,7 +249,8 @@ class MixedSound
     inline
     void putValue(uint8_t* buf, int32_t value)
     {
-	cout << "put value: " << value << endl;
+	if (DEBUG == DBGLEVEL3)
+	  cout << "put value: " << value << endl;
 
 	uint8_t* pVal = (uint8_t*) (&value);
 	for (uint8_t i = 0; i < bapc; ++i)
@@ -325,8 +334,8 @@ public:
 	    for ( uint32_t j = 0; j < sz; ++j )
 	    {
 		int64_t base = (int32_t) takeValue(mx);
-		int64_t adder = (int32_t) takeValue(dt);		
-		int64_t val = (base + adder) * vl / ( vl + (base * adder) / vl );
+		int64_t adder = (int32_t) takeValue(dt);
+		int64_t val = (base + adder) * vl / ( vl + abs(base * adder) / vl );
 		
 		putValue(mx, val);
 
@@ -534,7 +543,7 @@ void clipMixedTest1byte()
       vector<int8_t> data3 = { -30, 30, 30, 40, 30, 30 };
       vector<int8_t> data4 = { -30, 30,  0, 20, 20, 40 };
       vector<int8_t> expected = 
-		             { -78, 78, 71, 70, 70, 75 };
+		             { -94, 94, 78, 78, 78, 78 };
 
       vector<uint8_t*> data = { (uint8_t*)data1.data(), (uint8_t*)data2.data(), (uint8_t*)data3.data(), (uint8_t*)data4.data() };
       vector<uint32_t> size = { 6, 3, 6, 6 };
@@ -551,14 +560,14 @@ void clipMixedTest1byte()
       }
 }
 
-void clipMixedTest3byte()
+void clipMixedTest3byte1()
 {
       vector<uint8_t> data1 = { 0xFF,  0x7F };
       vector<uint8_t> data2 = { 0xFF,  0x7F };
       vector<uint8_t> data3 = { 0x03, 0x80 };
       vector<uint8_t> data4 = { 0xFF,  0x7F };
       vector<uint8_t> expected = 
-		            { 0x8F, 0xD3 };
+		            { 0xFF, 0x7F };
 
       vector<uint8_t*> data = { data1.data(), data2.data(), data3.data(), data4.data() };
       vector<uint32_t> size = { 2, 2, 2, 2 };
@@ -570,20 +579,20 @@ void clipMixedTest3byte()
       for (uint8_t v: expected)
       {
 	cout << hex << +v << " - " << +mxData[i] << endl;
-//	assert( v == mxData[i]);
+	assert( v == mxData[i]);
 	++i;
       }
       cout << dec;
 }
 
-void clipMixedTest3bytea()
+void clipMixedTest3byte2()
 {
       vector<uint8_t> data1 = { 0xFF,  0x7F };
       vector<uint8_t> data3 = { 0xFF,  0x7F };
       vector<uint8_t> data2 = { 0x03, 0x80 };
       vector<uint8_t> data4 = { 0xFF,  0x7F };
       vector<uint8_t> expected = 
-		            { 0x8F, 0xD3 };
+		            { 0xFF, 0x7F };
 
       vector<uint8_t*> data = { data1.data(), data2.data(), data3.data(), data4.data() };
       vector<uint32_t> size = { 2, 2, 2, 2 };
@@ -595,7 +604,7 @@ void clipMixedTest3bytea()
       for (uint8_t v: expected)
       {
 	cout << hex << +v << " - " << +mxData[i] << endl;
-//	assert( v == mxData[i]);
+	assert( v == mxData[i]);
 	++i;
       }
       cout << dec;
@@ -604,9 +613,12 @@ void clipMixedTest3bytea()
 int main()
 {
     // Mixed sound tests
-//  clipMixedTest1byte();
-  cout << "new test " << endl;
-  clipMixedTest3byte();
+  cout << ">>> new test " << endl;
+  clipMixedTest1byte();
+  cout << ">>> new test " << endl;
+  clipMixedTest3byte1();
+  cout << ">>> new test " << endl;
+  clipMixedTest3byte2();
   
 //   cout << "new test " << endl;
 //   clipMixedTest3bytea();
