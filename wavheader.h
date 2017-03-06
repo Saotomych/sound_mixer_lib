@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <fstream>
+#include <string.h>
 
 struct WavHeader
 {
@@ -25,8 +26,19 @@ struct WavHeader
 	s.read((char*)this, 36);
 	s.ignore(subchunk1Size - 16);
 	s.read((char*) &subchunk2Id, 8);
-	
-	return *this;
+     
+     if ( 0x61746164 != subchunk2Id )   // not data
+     {
+          s.ignore(subchunk2Size);
+          s.read((char*) &subchunk2Id, 8);
+     }
+     
+     if ( 0x61746164 != subchunk2Id )   // not data
+     {
+          memset( this, 0, sizeof(*this));
+     }
+     
+     return *this;
     }
     
 };
