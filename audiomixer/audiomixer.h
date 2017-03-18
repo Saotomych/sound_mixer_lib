@@ -183,7 +183,7 @@ public:
           
           readers[nextHandle].reset( new audioreader::AudioReader(nextHandle) );
           audioreader::AudioReader& ar = *(readers[nextHandle]);
-          if ( ar.open( fileName ) == true )
+          if ( ar.open( fileName, nextHandle ) == true )
           {
                
                const audioreader::WavHeader& wh = ar.header();

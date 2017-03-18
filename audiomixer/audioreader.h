@@ -21,7 +21,7 @@ struct WavHeader;
 size_t fileSizeLeft(int32_t handle);
 
 // Кросс-Платформенный интерфейс
-int32_t openAudioFile(const char* fileName);
+int32_t openAudioFile(const char* fileName, int32_t handle);
 
 // Кросс-Платформенный интерфейс
 void closeAudioFile(int32_t handle);
@@ -79,10 +79,10 @@ public:
           audioreader::closeAudioFile( soundHandle );    
      }
      
-     bool open(std::string filename)
+     bool open(std::string filename, int32_t handle)
      {
           fname = filename;
-          int32_t handle = audioreader::openAudioFile(filename.c_str());
+          handle = audioreader::openAudioFile(filename.c_str(), handle);
           
           std::cout << "open audio file " << filename << " ... " << std::endl;
           

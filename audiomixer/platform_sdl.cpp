@@ -51,24 +51,22 @@ size_t audioreader::fileSizeLeft(int32_t handle)
      return files[handle].tellg();
 }
      
-int32_t audioreader::openAudioFile(const char* fileName)
+int32_t audioreader::openAudioFile(const char* fileName, int32_t handle)
 {
-     int32_t handle = 0;
-     for ( std::ifstream& s: files )
+     assert(handle >= 0 && handle < MAX_SOUNDS);
+     std::ifstream& s = files[handle];
+
+     if ( s.is_open() == false )
      {
-          if ( s.is_open() == false )
+          s.open(fileName, std::ios::in | std::ios::binary);
+          if (s.is_open() == true)
           {
-               s.open(fileName, std::ios::in | std::ios::binary);
-               if (s.is_open() == true)
-               {
-                    return handle;
-               }
-               else
-               {
-                    return INVALID_HANDLE;
-               }
+               return handle;
           }
-          ++handle;
+          else
+          {
+               return INVALID_HANDLE;
+          }
      }
 
      return INVALID_HANDLE;

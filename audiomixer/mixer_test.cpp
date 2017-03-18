@@ -9,7 +9,7 @@ int main()
 {
      
      vector<string> sound = { 
-          "./audio/road16bit11025.wav", 
+//          "./audio/road16bit11025.wav", 
           "./audio/cow.wav", 
           "./audio/romans.wav", 
           "./audio/falling16bit.wav", 
@@ -54,5 +54,7 @@ int main()
           lastTime -= 0.1;
      } while ( lastTime > 0 );
      
+     audioplayer::delayPlay( 100 );
+
      audioplayer::breakPlay();
 }
