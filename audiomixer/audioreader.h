@@ -61,7 +61,7 @@ class AudioReader
      
      int32_t soundHandle;
      
-     double secondsLeft;
+     double seconds;
      uint32_t bytesLeft;
      
      std::string fname;
@@ -100,11 +100,11 @@ public:
                
                blockLen = sz / bapc * bapc;
                bytesLeft = wHeader.subchunk2Size;
-               secondsLeft =  (double)(bytesLeft) / wHeader.byteRate;
+               seconds =  (double)(bytesLeft) / wHeader.byteRate;
 
                std::cout << "size: " << bytesLeft << " bytes" << std::endl;
                
-               std::cout << "timing: " << secondsLeft << "secs" << std::endl;
+               std::cout << "timing: " << seconds << "secs" << std::endl;
                
                if ( bufFromFile.size() < blockLen )
                     bufFromFile.resize(blockLen);
@@ -122,7 +122,7 @@ public:
           
           if (blockLen)
           {
-               uint32_t length = wHeader.chunkSize - fileSizeLeft(soundHandle) + 8;
+               uint32_t length = bytesLeft;
                length = (length < blockLen) ? length : blockLen;
                
                if (length)
@@ -135,6 +135,8 @@ public:
                size = length;
                buffer = (uint8_t*) bufFromFile.data();
                
+               bytesLeft -= length;
+               
                return true;
           }
           
@@ -142,11 +144,11 @@ public:
      }
      
      /**
-     *    @brief returns time in seconds to end
+     *    @brief sound time in seconds
      */
-     double secLeft()
+     double fullTime()
      {
-          return secondsLeft;
+          return seconds;
      }
     
      /**

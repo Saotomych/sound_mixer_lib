@@ -130,7 +130,7 @@ public:
                assert( audioSize <= length );
                assert( audioBuffer != nullptr );
                
-               std::cout << "begin mix from reader: " << idx << std::endl; 
+               std::cout << "begin mix from reader: " << idx << " with len = " << audioSize << std::endl; 
                
                if ( maxSize < audioSize )
                     maxSize = audioSize;
@@ -198,7 +198,7 @@ public:
                
                if ( fullSizeLeft < ar.sizeLeft() )
                {
-                    fullSecondLeft = ar.secLeft();
+                    fullSecondLeft = ar.fullTime();
                     fullSizeLeft = ar.sizeLeft();
                }
 

@@ -8,23 +8,23 @@ using namespace std;
 int main()
 {
      
-     vector<string> sound = { 
-//          "./audio/road16bit11025.wav", 
-          "./audio/cow.wav", 
-          "./audio/romans.wav", 
-          "./audio/falling16bit.wav", 
-          "./audio/cow.wav", 
-          "./audio/romans.wav", 
-          "./audio/falling16bit.wav", 
-          "./audio/cow.wav", 
-          "./audio/romans.wav", 
-     };
-     
-//      vector<string> sound = { "highlands16bit.wav", "silence.wav", "silence.wav", "silence.wav", "silence.wav",
-//           "silence.wav", "silence.wav", "silence.wav", "silence.wav"
+//      vector<string> sound = { 
+//           "./audio/road16bit11025.wav", 
+//           "./audio/cow.wav", 
+//           "./audio/romans.wav", 
+//           "./audio/falling16bit.wav", 
+//           "./audio/cow.wav", 
+//           "./audio/romans.wav", 
+//           "./audio/falling16bit.wav", 
+//           "./audio/cow.wav", 
+//           "./audio/romans.wav", 
 //      };
      
-     vector<int> startTime = { 0, 5, 12, 14, 19, 20, 25, 32, 35 }; // with 0,1 second step
+     vector<string> sound = { "./audio/highlands16bit.wav", "./audio/silence.wav", "./audio/silence.wav", "./audio/silence.wav", 
+          "./audio/silence.wav", "./audio/silence.wav", "./audio/silence.wav", "./audio/silence.wav", "./audio/silence.wav"
+     };
+     
+     vector<int> startTime = { 0, 5, 120, 140, 190, 200, 250, 320, 350 }; // with 0,1 second step
      
      AudioApi sndApi;
      
