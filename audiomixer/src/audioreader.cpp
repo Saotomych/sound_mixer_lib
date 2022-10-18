@@ -1,4 +1,5 @@
 #include <audiomixer/src/audioreader.h>
+#include <audiomixer/wav_header.h>
 
 using namespace audioreader;
 
@@ -8,15 +9,15 @@ AudioReader::AudioReader(int32_t handle): soundHandle(handle)
 
 AudioReader::~AudioReader()
 {
-    audioreader::closeAudioFile( soundHandle );
+    audioreader::CloseAudioFile(soundHandle);
 }
 
 bool AudioReader::Open(std::string filename, int32_t handle)
 {
-    handle = audioreader::openAudioFile(filename.c_str(), handle);
-    if ( handle != INVALID_HANDLE )
+    handle = audioreader::OpenAudioFile(filename.c_str(), handle);
+    if (handle != INVALID_HANDLE)
     {
-        bool res = audioreader::readWavHeader(handle, wHeader);
+        bool res = audioreader::ReadWavHeader(handle, wHeader);
         if (!res)
             return false;
 
@@ -45,7 +46,7 @@ bool AudioReader::NextDataBlock(uint8_t*& buffer, uint32_t& size)
 
         if (length)
         {
-            audioreader::readFile(soundHandle, bufFromFile.data(), length);
+            audioreader::ReadFile(soundHandle, bufFromFile.data(), length);
         }
         size = length;
         buffer = (uint8_t*) bufFromFile.data();
@@ -56,17 +57,17 @@ bool AudioReader::NextDataBlock(uint8_t*& buffer, uint32_t& size)
     return false;
 }
 
-double AudioReader::FullTime()
+double AudioReader::FullTime() const
 {
     return seconds;
 }
 
-uint32_t AudioReader::SizeLeft()
+uint32_t AudioReader::SizeLeft() const
 {
     return bytesLeft;
 }
 
-const WavHeader& AudioReader::Header()
+const WavHeader& AudioReader::Header() const
 {
     return wHeader;
 }

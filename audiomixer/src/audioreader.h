@@ -1,43 +1,20 @@
 #ifndef AUDIO_READER_H
 #define AUDIO_READER_H
 
+#include <audiomixer/wav_header.h>
+#include <audio_platform/audio_platform.h>
+
 #include <vector>
 #include <string>
-
-#include <audiomixer/src/audioplayer.h>
-
-#define INVALID_HANDLE ((int32_t) -1)
 
 namespace audioreader
 {
 
-struct WavHeader;
-     
 size_t FileSizeLeft(int32_t handle);
 int32_t OpenAudioFile(const char* fileName, int32_t handle);
 void CloseAudioFile(int32_t handle);
 uint32_t ReadFile(int32_t handle, char* buffer, uint32_t size);
 bool ReadWavHeader(int32_t handle, WavHeader& header);
-
-struct WavHeader
-{
-     uint32_t chunkId;    // Содержит символы “RIFF” в ASCII кодировке 
-     uint32_t chunkSize;  // оставшийся размер цепочки, начиная с этой позиции
-     uint32_t format;     // символы “WAVE” 
-     uint32_t subchunk1Id;     // Содержит символы “fmt “ 
-     uint32_t subchunk1Size;   // оставшийся размер подцепочки, начиная с этой позиции
-     uint16_t audioFormat;     //  Для PCM = 1
-     uint16_t numChannels;     // 
-     uint32_t sampleRate; // 44100 Гц и т.д.
-     uint32_t byteRate;   // Количество байт, переданных за секунду воспроизведения.
-     uint16_t blockAlign;      // Количество байт для одного сэмпла, включая все каналы
-     uint16_t bitsPerSample;   // Количество бит в сэмпле
-     uint32_t subchunk2Id;     // Содержит символы “data” 
-     uint32_t subchunk2Size;   // Количество байт в области данных.
-     
-     char in4[4];
-     char in2[2];
-};
 
 class AudioReader
 {
@@ -63,15 +40,15 @@ public:
 
      /// @brief Full sound time in seconds
      /// @return sound time in seconds
-     double FullTime();
+     double FullTime() const;
 
      /// @brief Size to end
      /// @return size to end in bytes
-     uint32_t SizeLeft();
+     uint32_t SizeLeft() const;
 
      ///  @brief Get Wav header
      /// @return Wav header
-     const WavHeader& header();
+     const WavHeader& Header() const;
 
 private:
     std::vector<char> bufFromFile;

@@ -2,6 +2,7 @@
 #define AUDIO_API
 
 #include <memory>
+#include <audiomixer/wav_header.h>
 
 namespace audiomixer
 {
@@ -11,8 +12,12 @@ namespace audiomixer
 class AudioMixerApi
 {
 public:
-     
-     AudioApi() = default;
+
+     /// @brief ctor
+     AudioMixerApi();
+
+     /// @brief dtor
+     ~AudioMixerApi();
 
      /// @brief Start playing by filename
      /// @param [in] filename Sound file name
@@ -22,28 +27,28 @@ public:
 
      /// @brief Stop playing definite sound by handle
      /// @param [in] handle Sound handle
-     void StopSound(int32_t handle) nothrow;
+     void StopSound(int32_t handle) noexcept;
 
      /// @brief Pause playing definite sound by handle
      /// @param [in] handle
-     void PauseSound(int32_t handle) nothrow;
+     void PauseSound(int32_t handle) noexcept;
 
     /// @brief Resume playing definite sound by handle
     /// @param [in] handle
-     void ResumeSound(int32_t handle) nothrow;
+     void ResumeSound(int32_t handle) noexcept;
 
      /// @brief Pause all sounds
-     void Pause() nothrow;
+     void Pause() noexcept;
 
      /// @brief Resume all sounds
-     void Resume() nothrow;
+     void Resume() noexcept;
 
      /// @brief Get rest playing as time in seconds
      /// @return Time in seconds
-     double LeftTime() nothrow;
+     double LeftTime() noexcept;
 
      /// @brief Get rest playing as size of the longest file
-     uint64_t LeftSize() nothrow;
+     uint64_t LeftSize() noexcept;
 
 private:
 

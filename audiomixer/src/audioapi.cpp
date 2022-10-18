@@ -1,8 +1,11 @@
 #include <audiomixer/audiomixer_api.h>
 #include <audiomixer/src/audiomixer.h>
+#include <audio_platform/audio_platform.h>
 #include <stdexcept>
 
-AudioMixerApi::AudioMixerApi(): mixer(std::make_unique<Mixer())
+using namespace audiomixer;
+
+AudioMixerApi::AudioMixerApi(): mixer(std::make_unique<AudioMixer>())
 {
 }
 
@@ -12,8 +15,8 @@ AudioMixerApi::~AudioMixerApi()
 
 int32_t AudioMixerApi::PlaySound(std::string fileName)
 {
-    int32_t soundHandle = mixer.addSound( fileName );
-    if ( soundHandle == INVALID_HANDLE )
+    int32_t soundHandle = mixer->AddSound(fileName);
+    if (soundHandle == INVALID_HANDLE)
     {
         throw std::invalid_argument("File name not found");
     }
@@ -21,37 +24,37 @@ int32_t AudioMixerApi::PlaySound(std::string fileName)
     return soundHandle;
 }
 
-void AudioMixerApi::StopSound(int32_t handle)
+void AudioMixerApi::StopSound(int32_t handle) noexcept
 {
-    mixer.removeSound(handle);
+    mixer->RemoveSound(handle);
 }
 
-void AudioMixerApi::PauseSound(int32_t handle)
-{
-
-}
-
-void AudioMixerApi::ResumeSound(int32_t handle)
+void AudioMixerApi::PauseSound(int32_t handle) noexcept
 {
 
 }
 
-void AudioMixerApi::Pause()
+void AudioMixerApi::ResumeSound(int32_t handle) noexcept
 {
-    audioplayer::pausePlay();
+
 }
 
-void AudioMixerApi::Resume()
+void AudioMixerApi::Pause() noexcept
 {
-    audioplayer::startPlay();
+    PausePlay();
 }
 
-double AudioMixerApi::LeftTime()
+void AudioMixerApi::Resume() noexcept
 {
-    return mixer.secLeft();
+    StartPlay();
 }
 
-uint32_t AudioMixerApi::LeftSize()
+double AudioMixerApi::LeftTime() noexcept
 {
-    return mixer.sizeLeft();
+    return mixer->SecLeft();
+}
+
+uint64_t AudioMixerApi::LeftSize() noexcept
+{
+    return mixer->SizeLeft();
 }
