@@ -7,35 +7,38 @@
 
 #include <audio_platform/audio_platform.h>
 
-namespace
-{
-std::unordered_map<uint32_t, std::ifstream> files;
-SDL_AudioSpec wanted;
-cbFn userFn = nullptr;
+namespace {
+    std::unordered_map <uint32_t, std::ifstream> files;
+    SDL_AudioSpec wanted;
+    cbFn userFn = nullptr;
 
-uint8_t* actualSound = nullptr;
-uint32_t actualLen = 0;
+    uint8_t *actualSound = nullptr;
+    uint32_t actualLen = 0;
 
-void FillAudio(void *udata, Uint8 *stream, int len)
-{
-    if (udata == nullptr)
-    {
-       return;
+    void FillAudio(void *udata, Uint8 *stream, int len) {
+        if (udata == nullptr) {
+            return;
+        }
+
+        uint32_t realLen = userFn(udata, stream, len);
+        actualLen -= realLen;
+        actualSound += realLen;
     }
 
-    uint32_t realLen = userFn(udata, stream, len);
-    actualLen -= realLen;
-    actualSound += realLen;
-}
 }
 
-size_t FileSizeLeft(int32_t handle)
+extern "C"
+uint32_t PlatformFileSizeLeft(int32_t handle)
 {
      return files[handle].tellg();
 }
-     
-int32_t OpenAudioFile(const char* fileName, int32_t handle)
+
+extern "C"
+int32_t PlatformOpenAudioFile(const char* fileName, int32_t handle)
 {
+     if (files.find(handle) == files.end())
+         files.emplace(handle, std::ifstream());
+
      std::ifstream& s = files[handle];
 
      if ( s.is_open() == false )
@@ -54,13 +57,16 @@ int32_t OpenAudioFile(const char* fileName, int32_t handle)
      return INVALID_HANDLE;
 }
 
-void CloseAudioFile(int32_t handle)
+extern "C"
+void PlatformCloseAudioFile(int32_t handle)
 {
      if (files[handle].is_open())
           files[handle].close();
+     files.erase(handle);
 }
-    
-uint32_t ReadFile(int32_t handle, char* buffer, uint32_t size)
+
+extern "C"
+uint32_t PlatformReadFile(int32_t handle, char* buffer, uint32_t size)
 {
      assert(buffer != nullptr);
      assert(size != 0);
@@ -74,7 +80,8 @@ uint32_t ReadFile(int32_t handle, char* buffer, uint32_t size)
      return size;
 }
 
-bool ReadWavHeader(int32_t handle, WavHeader& header)
+extern "C"
+bool PlatformReadWavHeader(int32_t handle, WavHeader& header)
 {
      std::ifstream& s = files[handle];
      
@@ -108,7 +115,8 @@ bool ReadWavHeader(int32_t handle, WavHeader& header)
      return true;
 }
 
-bool OpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
+extern "C"
+bool PlatformOpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
 {
      if (SDL_Init(SDL_INIT_AUDIO) < 0)
      {
@@ -119,7 +127,7 @@ bool OpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
      wanted.freq = wavHeader->sampleRate;
      wanted.format = AUDIO_S16;
      wanted.channels = wavHeader->numChannels;    /* 1 = mono, 2 = stereo */
-     wanted.samples = wavHeader->byteRate / 10;  /* Good low-latency value for callback */
+     wanted.samples = wavHeader->sampleRate / 10;  /* Good low-latency value for callback */
      wanted.callback = FillAudio;
      wanted.userdata = cbUserData;
      userFn = fn;
@@ -135,32 +143,37 @@ bool OpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
      return true;
 }
 
-void CloseDevice()
+extern "C"
+void PlatformCloseDevice()
 {
 //     std::cout << "close SDL device" << std::endl;
      SDL_CloseAudio();
 }
 
-void StartPlay()
+extern "C"
+void PlatformStartPlay()
 {
 //     std::cout << "resume SDL audio" << std::endl;
      SDL_PauseAudio(0);
 }
 
-void PausePlay()
+extern "C"
+void PlatformPausePlay()
 {
 //     std::cout << "pause SDL audio" << std::endl;
      SDL_PauseAudio(1);
 }
 
-void BreakPlay()
+extern "C"
+void PlatformBreakPlay()
 {
 //     std::cout << "abort SDL audio" << std::endl;
      SDL_PauseAudio(1);
      SDL_CloseAudio();
 }
 
-void DelayPlay( uint32_t ms)
+extern "C"
+void PlatformDelayPlay( uint32_t ms)
 {
 //     std::cout << "delay play SDL audio" << std::endl;
      SDL_Delay( ms );

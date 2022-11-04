@@ -1,6 +1,9 @@
 #include <audiomixer/src/audioreader.h>
 #include <audiomixer/wav_header.h>
 
+#include <algorithm>
+#include <utility>
+
 using namespace audioreader;
 
 AudioReader::AudioReader(int32_t handle): soundHandle(handle)
@@ -9,15 +12,15 @@ AudioReader::AudioReader(int32_t handle): soundHandle(handle)
 
 AudioReader::~AudioReader()
 {
-    audioreader::CloseAudioFile(soundHandle);
+    PlatformCloseAudioFile(soundHandle);
 }
 
 bool AudioReader::Open(std::string filename, int32_t handle)
 {
-    handle = audioreader::OpenAudioFile(filename.c_str(), handle);
+    handle = PlatformOpenAudioFile(filename.c_str(), handle);
     if (handle != INVALID_HANDLE)
     {
-        bool res = audioreader::ReadWavHeader(handle, wHeader);
+        bool res = PlatformReadWavHeader(handle, wHeader);
         if (!res)
             return false;
 
@@ -36,21 +39,24 @@ bool AudioReader::Open(std::string filename, int32_t handle)
     return false;
 }
 
-
 bool AudioReader::NextDataBlock(uint8_t*& buffer, uint32_t& size)
 {
     if (blockLen)
     {
         uint32_t length = bytesLeft;
         length = (length < blockLen) ? length : blockLen;
-
         if (length)
         {
-            audioreader::ReadFile(soundHandle, bufFromFile.data(), length);
+            PlatformReadFile(soundHandle, bufFromFile.data(), length);
+            bytesLeft -= length;
+        } else {
+            length = 8;
+            bufFromFile.resize(length);
+            std::fill(bufFromFile.begin(), bufFromFile.end(), bufFromFile.size());
         }
+
         size = length;
         buffer = (uint8_t*) bufFromFile.data();
-        bytesLeft -= length;
         return true;
     }
 

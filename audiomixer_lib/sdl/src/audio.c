@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include "../include/audio.h"
+#include <sdl/include/audio.h>
 
 /*
  * Native WAVE format
@@ -29,7 +29,7 @@
  *      mplayer -identify music.wav
  *
  * On some GNU/Linux to convert any music to this or another specified format use:
- *      ffmpeg -i in.mp3 -acodec pcm_s16le -ac 2 -ar 48000 out.wav
+ *      ffmpeg -i in.mp3 -acodec pcm_s16le -ac 1 -ar 11025 out.wav
  */
 /* SDL_AudioFormat of files, such as s16 little endian */
 #define AUDIO_FORMAT AUDIO_S16LSB

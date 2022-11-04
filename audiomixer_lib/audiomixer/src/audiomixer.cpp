@@ -1,4 +1,5 @@
 #include <audiomixer/src/audiomixer.h>
+#include <audiomixer/wav_header.h>
 #include <audio_platform/audio_platform.h>
 
 #include <algorithm>
@@ -30,9 +31,7 @@ uint32_t AudioMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
     std::fill(mixedData, &mixedData[length], 0);
     for (auto& reader: readers)
     {
-        if (reader.second.NextDataBlock(audioBuffer, audioSize) == false || audioSize == 0)
-        {
-            DeleteSound(reader.first);
+        if (!reader.second.NextDataBlock(audioBuffer, audioSize) || audioSize == 0) {
             continue;
         }
 
@@ -57,6 +56,18 @@ uint32_t AudioMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
         }
     }
 
+    bool pass = false;
+    while(!pass) {
+        pass = true;
+        for (auto &reader: readers) {
+            if (!reader.second.SizeLeft()) {
+                readers.erase(reader.first);
+                pass = false;
+                break;
+            }
+        }
+    }
+
     fullSecondLeft -= (double) maxSize / btrate;
     if (abs(fullSecondLeft) < 0.01)
         fullSecondLeft = 0.;
@@ -71,15 +82,15 @@ int32_t AudioMixer::AddSound(std::string fileName)
     std::unique_lock<std::mutex> lock(mtSoundReaders);
 
     auto it = readers.emplace(nextHandle, audioreader::AudioReader(nextHandle));
-    if (it.first->second.Open(fileName, nextHandle))
+    if (it.second && it.first->second.Open(fileName, nextHandle))
     {
         auto& ar = it.first->second;
         const WavHeader& wh = ar.Header();
         if (fullSecondLeft == 0.)
         {
-            if (OpenDevice(&wh, platformCbFn, this))
+            if (PlatformOpenDevice(&wh, platformCbFn, this))
             {
-                StartPlay();
+                PlatformStartPlay();
             } else {
                 readers.erase(it.first);
                 return INVALID_HANDLE;
@@ -101,7 +112,9 @@ int32_t AudioMixer::AddSound(std::string fileName)
         return tmp;
     }
 
-    readers.erase(it.first);
+    if (it.second)
+        readers.erase(it.first);
+
     return INVALID_HANDLE;
 }
 
@@ -162,9 +175,5 @@ void AudioMixer::PutValue(uint8_t* buf, int32_t value)
 
 void AudioMixer::DeleteSound(uint32_t idx)
 {
-    auto it = readers.find(idx);
-    if (it != readers.end())
-    {
-        readers.erase(it);
-    }
+    readers.erase(idx);
 }

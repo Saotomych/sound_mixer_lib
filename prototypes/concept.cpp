@@ -1,17 +1,12 @@
 #include <iostream>
-#include <cstdint>
-#include <limits.h>
 #include <cstring>
 #include <fstream>
 #include <vector>
-#include <list>
 #include <cassert>
 #include <algorithm>
-#include <utility>
 #include <memory>
 
 #include <SDL2/SDL.h>
-#include "../sdl/include/audio.h"
 
 #include "wavheader.h"
 
@@ -172,7 +167,7 @@ void openNativeAudio(WavInfo& info, SDL_AudioSpec& wanted)
      wanted.freq = info.header().sampleRate;
      wanted.format = AUDIO_S16;
      wanted.channels = info.header().numChannels;    /* 1 = mono, 2 = stereo */
-     wanted.samples = info.header().byteRate / 10;  /* Good low-latency value for callback */
+     wanted.samples = info.header().sampleRate / 10;  /* Good low-latency value for callback */
      wanted.callback = fill_audio;
      wanted.userdata = &info;
      
@@ -190,7 +185,7 @@ int main()
      if ( SDL_Init(SDL_INIT_AUDIO) < 0 )
           return 1;
      
-     vector<string> sound = { "dtmf.wav" }; //, "cow.wav", "romans.wav" }; //, "romans.wav" };
+     vector<string> sound = { "./audio/test_sound1.wav" }; //, "cow.wav", "romans.wav" }; //, "romans.wav" };
      vector<int> startTime = { 0 }; //, 15, 50 }; //, 30 }; // with 0,1 second step
      
      WavInfo wav( 0 );

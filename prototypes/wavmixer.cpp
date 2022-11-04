@@ -1,17 +1,13 @@
 #include <iostream>
-#include <cstdint>
-#include <limits.h>
 #include <cstring>
 #include <fstream>
 #include <vector>
 #include <list>
 #include <cassert>
 #include <algorithm>
-#include <utility>
 #include <memory>
 
 #include <SDL2/SDL.h>
-#include "sdl/include/audio.h"
 
 #include "wavheader.h"
 
@@ -692,10 +688,14 @@ int main()
      // Initialize SDL.
      if (SDL_Init(SDL_INIT_AUDIO) < 0)
           return 1;
-     
-     vector<string> sound = { "road16bit11025.wav", "cow.wav", "romans.wav", "falling16bit.wav", "falling16bit.wav",
-          "falling16bit.wav", "cow.wav", "romans.wav", "cow.wav"
-     };
+
+    std::vector<std::string> sound = { "./audio/test_sound2.wav",
+                                        "./audio/test_sound3.wav",
+                                        "./audio/test_sound4.wav" };
+
+//    vector<string> sound = { "road16bit11025.wav", "cow.wav", "romans.wav", "falling16bit.wav", "falling16bit.wav",
+//          "falling16bit.wav", "cow.wav", "romans.wav", "cow.wav"
+//     };
 
 //      vector<string> sound = { "highlands16bit.wav", "silence.wav", "silence.wav", "silence.wav", "silence.wav",
 //           "silence.wav", "silence.wav", "silence.wav", "silence.wav"

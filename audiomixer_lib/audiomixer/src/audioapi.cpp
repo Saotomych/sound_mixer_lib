@@ -1,4 +1,5 @@
-#include <audiomixer/audiomixer_api.h>
+#include <include/audiomixer_api.h>
+#include <audiomixer/wav_header.h>
 #include <audiomixer/src/audiomixer.h>
 #include <audio_platform/audio_platform.h>
 #include <stdexcept>
@@ -41,12 +42,12 @@ void AudioMixerApi::ResumeSound(int32_t handle) noexcept
 
 void AudioMixerApi::Pause() noexcept
 {
-    PausePlay();
+    PlatformPausePlay();
 }
 
 void AudioMixerApi::Resume() noexcept
 {
-    StartPlay();
+    PlatformStartPlay();
 }
 
 double AudioMixerApi::LeftTime() noexcept
@@ -57,4 +58,14 @@ double AudioMixerApi::LeftTime() noexcept
 uint64_t AudioMixerApi::LeftSize() noexcept
 {
     return mixer->SizeLeft();
+}
+
+void AudioMixerApi::DelayPlay(uint32_t ms) noexcept
+{
+    PlatformDelayPlay(ms);
+}
+
+void AudioMixerApi::BreakPlay() noexcept
+{
+    PlatformBreakPlay();
 }

@@ -4,11 +4,12 @@ set(TARGET_NAME audiomixer)
 
 project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Embedded audio mixer")
 
-add_library(${TARGET_NAME} SHARED
+add_library(${TARGET_NAME} STATIC
         audiomixer/src/audioapi.cpp
         audiomixer/src/audiomixer.cpp
         audiomixer/src/audioreader.cpp
         audio_platform/src/platform_sdl.cpp
+        sdl/src/audio.c
         )
 
 target_compile_features(${TARGET_NAME} PRIVATE cxx_std_11)
@@ -17,6 +18,8 @@ target_include_directories(${TARGET_NAME} PRIVATE .)
 set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${TARGET_NAME} PROPERTIES SOVERSION 1)
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER audiomixer/audiomixer_api.h)
+
+add_compile_options(-gdwarf-3 -Wall -Wextra -pedantic -Werror)
 
 install(TARGETS ${TARGET_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

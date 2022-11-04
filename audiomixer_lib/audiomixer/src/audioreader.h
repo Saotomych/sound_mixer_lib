@@ -10,12 +10,6 @@
 namespace audioreader
 {
 
-size_t FileSizeLeft(int32_t handle);
-int32_t OpenAudioFile(const char* fileName, int32_t handle);
-void CloseAudioFile(int32_t handle);
-uint32_t ReadFile(int32_t handle, char* buffer, uint32_t size);
-bool ReadWavHeader(int32_t handle, WavHeader& header);
-
 class AudioReader
 {
 public:
