@@ -127,7 +127,8 @@ bool PlatformOpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
      wanted.freq = wavHeader->sampleRate;
      wanted.format = AUDIO_S16;
      wanted.channels = wavHeader->numChannels;    /* 1 = mono, 2 = stereo */
-     wanted.samples = wavHeader->sampleRate / 10;  /* Good low-latency value for callback */
+     wanted.samples = wanted.channels == 1 ? wavHeader->sampleRate / 10 :
+            wavHeader->byteRate / 10;  /* Good low-latency value for callback */
      wanted.callback = FillAudio;
      wanted.userdata = cbUserData;
      userFn = fn;
