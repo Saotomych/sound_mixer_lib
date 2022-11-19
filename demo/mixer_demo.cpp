@@ -2,12 +2,16 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <sys/stat.h>
 
 #include <audiomixer_lib/include/audiomixer_api.h>
 #include <demo/cl_parser.hpp>
 
 #include <rapidjson/document.h>
+
+namespace
+{
 
 struct Cli
 {
@@ -66,27 +70,87 @@ bool parseConfigFile(
     std::reference_wrapper<std::vector<std::string>> _sounds,
     std::reference_wrapper<std::vector<uint32_t>> _delays)
 {
+    using namespace rapidjson;
+
     auto& sounds = _sounds.get();
     auto& delays = _delays.get();
 
     if (cfgFile.empty())
         return false;
 
-    std::vector<wchar_t> jsondoc;
+    std::vector<char> jsondoc;
     std::ios_base::sync_with_stdio(false);
-    std::wcout.imbue(std::locale("C.UTF-8"));
-    std::wifstream cfg(cfgFile, std::ios::binary);
+    std::cout.imbue(std::locale("C.UTF-8"));
+    std::ifstream cfg(cfgFile, std::ios::binary);
     if (!cfg.is_open()) 
     {
         std::cout << "File " << cfgFile << " not found." << std::endl;
         return false;
     }
     cfg.imbue(std::locale("C.UTF-8"));
-    std::copy(std::istreambuf_iterator<wchar_t>(cfg), std::istreambuf_iterator<wchar_t>(), 
+    std::copy(std::istreambuf_iterator<char>(cfg), std::istreambuf_iterator<char>(), 
          std::back_inserter(jsondoc));
 
-    // TODO Fill sounds and delays from json
-    std::copy(jsondoc.begin(), jsondoc.end(), std::ostream_iterator<wchar_t, wchar_t>(std::wcout, L""));    
+    std::copy(jsondoc.begin(), jsondoc.end(), std::ostream_iterator<char, char>(std::cout, ""));
+    
+    std::stringstream jsonstr;
+    std::copy(jsondoc.begin(), jsondoc.end(), std::ostream_iterator<char>(jsonstr));
+
+    Document doc;
+    doc.Parse(jsonstr.str().c_str());
+
+    const char flagFiles[] = "files";
+    const char flagDelays[] = "delays";
+    const char flagDirectory[] = "directory";
+
+    if (!doc.IsObject())
+    {
+        std::cout << "JSON config file is invalid." << std::endl;
+        return false;
+    }
+    if (!doc.HasMember(flagFiles) ||
+        !doc[flagFiles].IsArray() ||
+        !doc[flagFiles].Size() ||
+        !doc[flagFiles][0].IsString() )
+    {
+        std::cout << "Configuration has not member '" << flagFiles << "' or it is invalid." << std::endl;
+        return false;
+    }
+    if (!doc.HasMember(flagDelays) ||
+        !doc[flagDelays].IsArray() ||
+        !doc[flagDelays].Size() ||
+        !doc[flagDelays][0].IsInt() )
+    {
+        std::cout << "Configuration has not member '" << flagDelays << "' or it is invalid." << std::endl;
+        return false;
+    }
+
+    std::string directory;
+    if (doc.HasMember(flagDirectory))
+    {
+        if (doc[flagDirectory].IsString())
+        {
+            directory = doc[flagDirectory].GetString();
+        }
+        else
+        {
+            std::cout << "key '" << flagDirectory << "' is failed." << std::endl;
+            return false;
+        }
+    }
+
+    const Value& valFiles = doc[flagFiles];
+    for (const auto& file: valFiles.GetArray())
+    {
+        sounds.push_back(directory + "/" + file.GetString());
+    }
+
+    const Value& valDelays = doc[flagDelays];
+    for (const auto& delay: valDelays.GetArray())
+    {
+        delays.push_back(delay.GetInt());
+    }
+
     return true;
 }
 
@@ -137,6 +201,8 @@ bool fillConfigOneFile(
     return true;
 }
 
+} // namespace
+
 int main(int argc, char** argv)
 {
     const Cli cli = [argc, &argv]() {
@@ -164,7 +230,7 @@ int main(int argc, char** argv)
         !fillConfigFromDirectory(cli.directory, sounds, startDelays) &&
         !fillConfigOneFile(cli.sndFile, sounds, startDelays))
     {
-        std::cout << "No one sound file was set." << std::endl;
+        std::cout << "Config error or no one sound file was set." << std::endl;
         return -1;
     }
 
@@ -174,9 +240,10 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    std::cout << "sndfiles: " << std::endl;
+    std::cout << "Sound file list: " << std::endl;
     for (uint32_t i = 0; i < sounds.size(); i++) {
-        std::cout << " - " << sounds[i] << " : " << startDelays[i] << std::endl;
+        std::cout << " - " << sounds[i] << " : start through " << (startDelays[i] / 10) << 
+            "." << (startDelays[i] % 10) << " seconds" << std::endl;
     }
 
      audiomixer::AudioMixerApi sndMixer;
