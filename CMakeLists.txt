@@ -1,25 +1,17 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.14)
 
-set(TARGET_NAME audiomixer_demo)
-set(SRC_DIR "demo")
-set(OUT_DIR "bin")
-project(${TARGET_NAME} 
+option(SOUNDMIXER_BUILD_SHARED_LIB "Build shared libraries (.dll/.so) instead of static ones (.lib/.a)" OFF)
+option(SOUNDMIXER_BUILD_DEBUG_LIB "Build debug version of the library" OFF)
+option(SOUNDMIXER_BUILD_TESTS "Build and run unit tests" ON)
+
+set(SOUNDMIXER_BUILD_SHARED_LIB OFF)
+set(SOUNDMIXER_BUILD_DEBUG_LIB, OFF)
+set(SOUNDMIXER_BUILD_TESTS, ON)
+
+project(soundmixer
     VERSION 0.0.1 
     LANGUAGES CXX 
     DESCRIPTION "Demonstration for audio mixer library")
 
 add_subdirectory(audiomixer_lib)
-
-include_directories(. ./third_party/include/rapidjson/include ./audiomixer_lib)
-link_directories(lib)
-
-add_executable(${TARGET_NAME} 
-    ${SRC_DIR}/cl_parser.cpp 
-    ${SRC_DIR}/mixer_demo.cpp)
-
-target_compile_features(${TARGET_NAME} PRIVATE cxx_std_17)
-set_target_properties(${TARGET_NAME}  
-    PROPERTIES 
-        RUNTIME_OUTPUT_DIRECTORY ${OUT_DIR})
-
-target_link_libraries(${TARGET_NAME} audiomixer SDL2)
+add_subdirectory(demo)
