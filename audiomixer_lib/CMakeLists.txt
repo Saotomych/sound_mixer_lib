@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.14)
 include(CMakePackageConfigHelpers)
 
 set(TARGET_NAME soundmixer)
-set(OUT_DIR "../lib")
+set(LOCAL_LIB_OUT_DIR "../${LIB_OUT_DIR}")
+set(LOCAL_BIN_OUT_DIR "../${BIN_OUT_DIR}")
 
 project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Embedded audio mixer")
 
@@ -44,8 +45,8 @@ set_target_properties(${TARGET_NAME}
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
         PUBLIC_HEADER "${public_headers}"
-        LIBRARY_OUTPUT_DIRECTORY ${OUT_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${OUT_DIR})
+        LIBRARY_OUTPUT_DIRECTORY ${LOCAL_LIB_OUT_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${LOCAL_LIB_OUT_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror")
 if (DEFINED SOUNDMIXER_BUILD_DEBUG_LIB AND SOUNDMIXER_BUILD_DEBUG_LIB MATCHES ON)
@@ -54,6 +55,6 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 endif()
 
-#if (DEFINED SOUNDMIXER_BUILD_TEST_LIB AND SOUNDMIXER_BUILD_TEST_LIB MATCHES ON)
-#    add_test(NAME MixTest COMMAND 
-#endif()
+if (DEFINED SOUNDMIXER_BUILD_TEST_LIB AND SOUNDMIXER_BUILD_TEST_LIB MATCHES ON)
+    add_subdirectory(test)
+endif()

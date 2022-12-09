@@ -101,7 +101,7 @@ bool PlatformReadWavHeader(int32_t handle, WavHeader& header)
 }
 
 extern "C"
-bool PlatformOpenDevice(const WavHeader *wavHeader, cbFn fn, void *cbUserCtx)
+bool PlatformOpenDevice(const WavHeader*, cbFn fn, void *cbUserCtx)
 {
     userFn = fn;
     userCtx = cbUserCtx;
@@ -121,7 +121,7 @@ extern "C"
 void PlatformBreakPlay(){}
 
 extern "C"
-void PlatformDelayPlay(uint32_t ms){}
+void PlatformDelayPlay(uint32_t){}
 
 } // namespace
 
