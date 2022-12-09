@@ -2,7 +2,7 @@
 #define AUDIO_READER_H
 
 #include <audiomixer/wav_header.h>
-#include <audio_platform/audio_platform.h>
+#include <include/audio_platform.h>
 
 #include <vector>
 #include <string>

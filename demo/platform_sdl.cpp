@@ -5,10 +5,10 @@
 #include <SDL2/SDL.h>
 #include <sdl/include/audio.h>
 
-#include <audio_platform/audio_platform.h>
+#include <include/audio_platform.h>
 
 namespace {
-    std::unordered_map <uint32_t, std::ifstream> files;
+    std::unordered_map <int32_t, std::ifstream> files;
     SDL_AudioSpec wanted;
     cbFn userFn = nullptr;
 
@@ -138,37 +138,30 @@ bool PlatformOpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
      {
           return false;
      }
-
-//     std::cout << "SDL audio has opened" << std::endl;
-
      return true;
 }
 
 extern "C"
 void PlatformCloseDevice()
 {
-//     std::cout << "close SDL device" << std::endl;
      SDL_CloseAudio();
 }
 
 extern "C"
 void PlatformStartPlay()
 {
-//     std::cout << "resume SDL audio" << std::endl;
      SDL_PauseAudio(0);
 }
 
 extern "C"
 void PlatformPausePlay()
 {
-//     std::cout << "pause SDL audio" << std::endl;
      SDL_PauseAudio(1);
 }
 
 extern "C"
 void PlatformBreakPlay()
 {
-//     std::cout << "abort SDL audio" << std::endl;
      SDL_PauseAudio(1);
      SDL_CloseAudio();
 }
@@ -176,6 +169,5 @@ void PlatformBreakPlay()
 extern "C"
 void PlatformDelayPlay( uint32_t ms)
 {
-//     std::cout << "delay play SDL audio" << std::endl;
      SDL_Delay( ms );
 }

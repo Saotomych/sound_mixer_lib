@@ -18,7 +18,7 @@ void PlatformCloseAudioFile(int32_t handle);
 uint32_t PlatformReadFile(int32_t handle, char* buffer, uint32_t size);
 bool PlatformReadWavHeader(int32_t handle, WavHeader& header);
 
-bool PlatformOpenDevice(const WavHeader *wavHeader, cbFn fn, void *cbUserData);
+bool PlatformOpenDevice(const WavHeader *wavHeader, cbFn fn, void *cbUserCtx);
 void PlatformCloseDevice();
 void PlatformStartPlay();
 void PlatformPausePlay();

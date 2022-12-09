@@ -1,7 +1,7 @@
 #include <include/audiomixer_api.h>
+#include <include/audio_platform.h>
 #include <audiomixer/wav_header.h>
 #include <audiomixer/src/audiomixer.h>
-#include <audio_platform/audio_platform.h>
 #include <stdexcept>
 
 using namespace audiomixer;
@@ -30,12 +30,12 @@ void AudioMixerApi::StopSound(int32_t handle) noexcept
     mixer->RemoveSound(handle);
 }
 
-void AudioMixerApi::PauseSound(int32_t handle) noexcept
+void AudioMixerApi::PauseSound(int32_t) noexcept
 {
 
 }
 
-void AudioMixerApi::ResumeSound(int32_t handle) noexcept
+void AudioMixerApi::ResumeSound(int32_t) noexcept
 {
 
 }

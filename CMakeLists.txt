@@ -2,16 +2,24 @@ cmake_minimum_required(VERSION 3.14)
 
 option(SOUNDMIXER_BUILD_SHARED_LIB "Build shared libraries (.dll/.so) instead of static ones (.lib/.a)" OFF)
 option(SOUNDMIXER_BUILD_DEBUG_LIB "Build debug version of the library" OFF)
-option(SOUNDMIXER_BUILD_TESTS "Build and run unit tests" ON)
+option(SOUNDMIXER_BUILD_TEST_LIB "Build unit tests" ON)
+option(SOUNDMIXER_BUILD_DEMO_LIB "Build demo application" ON)
 
 set(SOUNDMIXER_BUILD_SHARED_LIB OFF)
-set(SOUNDMIXER_BUILD_DEBUG_LIB, OFF)
-set(SOUNDMIXER_BUILD_TESTS, ON)
+set(SOUNDMIXER_BUILD_DEBUG_LIB ON)
+set(SOUNDMIXER_BUILD_TEST_LIB ON)
+set(SOUNDMIXER_BUILD_DEMO_LIB ON)
 
-project(soundmixer
-    VERSION 0.0.1 
-    LANGUAGES CXX 
-    DESCRIPTION "Demonstration for audio mixer library")
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+project(soundmixer VERSION 0.0.1 DESCRIPTION "Sound mixer library and environment")
 
 add_subdirectory(audiomixer_lib)
-add_subdirectory(demo)
+
+if(DEFINED SOUNDMIXER_BUILD_DEMO_LIB AND SOUNDMIXER_BUILD_DEMO_LIB MATCHES ON)
+    add_subdirectory(demo)
+endif()
+
+if(DEFINED SOUNDMIXER_BUILD_TEST_LIB AND SOUNDMIXER_BUILD_TEST_LIB MATCHES ON)
+    add_subdirectory(third_party/gtest)
+endif()

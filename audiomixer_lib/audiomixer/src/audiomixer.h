@@ -37,8 +37,8 @@ private:
     double btrate; // timing per second
     int32_t vl;
     int32_t nextHandle = 0;
-    double fullSecondLeft;
-    uint32_t fullSizeLeft;
+    double fullSecondLeft = 0.;
+    uint32_t fullSizeLeft = 0;
 
     int32_t TakeValue(uint8_t* buf);
     void PutValue(uint8_t* buf, int32_t value);

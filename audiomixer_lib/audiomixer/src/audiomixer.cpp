@@ -1,6 +1,7 @@
+#include <include/audio_platform.h>
+#include <include/audiomixer_api.h>
 #include <audiomixer/src/audiomixer.h>
 #include <audiomixer/wav_header.h>
-#include <audio_platform/audio_platform.h>
 
 #include <algorithm>
 #include <utility>
@@ -12,7 +13,7 @@ namespace
 {
     uint32_t platformCbFn(void* udata, uint8_t* buffer, int size)
     {
-        audiomixer::AudioMixer* mixer = reinterpret_cast<audiomixer::AudioMixer *>(udata);
+        audiomixer::AudioMixer* mixer = reinterpret_cast<audiomixer::AudioMixer*>(udata);
         return mixer->GetMixedBuffer(buffer, size);
     }
 }
