@@ -1,7 +1,7 @@
-#include <include/audio_platform.h>
-#include <include/audiomixer_api.h>
-#include <audiomixer/src/audiomixer.h>
-#include <audiomixer/wav_header.h>
+#include <include/platform_deps.h>
+#include <include/soundmixer_api.h>
+#include <soundmixer/src/soundmixer.h>
+#include <soundmixer/wav_header.h>
 
 #include <algorithm>
 #include <utility>
@@ -13,38 +13,37 @@ namespace
 {
     uint32_t platformCbFn(void* udata, uint8_t* buffer, int size)
     {
-        audiomixer::AudioMixer* mixer = reinterpret_cast<audiomixer::AudioMixer*>(udata);
+        soundmixer::SoundMixer* mixer = reinterpret_cast<soundmixer::SoundMixer*>(udata);
         return mixer->GetMixedBuffer(buffer, size);
     }
 }
 
-using namespace audiomixer;
+using namespace soundmixer;
 
-uint32_t AudioMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
+uint32_t SoundMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
 {
-    assert(mixedData != nullptr);
+    if (!mixedData)
+        return 0;
 
     std::unique_lock<std::mutex> lock( mtSoundReaders );
-    uint8_t* audioBuffer = nullptr;
-    uint32_t audioSize = 0;
-    uint32_t maxSize = audioSize;
+    uint8_t* soundBuffer = nullptr;
+    uint32_t soundSize = 0;
+    uint32_t maxSize = soundSize;
 
     std::fill(mixedData, &mixedData[length], 0);
     for (auto& reader: readers)
     {
-        if (!reader.second.NextDataBlock(audioBuffer, audioSize) || audioSize == 0) {
+        if (!reader.second.NextDataBlock(soundBuffer, soundSize) || 
+            !soundSize || soundSize > length || !soundBuffer) {
             continue;
         }
 
-        assert(audioSize <= length);
-        assert(audioBuffer != nullptr);
+        if (maxSize < soundSize)
+            maxSize = soundSize;
 
-        if (maxSize < audioSize)
-            maxSize = audioSize;
-
-        uint8_t* dt = audioBuffer;
+        uint8_t* dt = soundBuffer;
         uint8_t* mx = mixedData;
-        for (uint32_t j = 0; j < audioSize; j = j + bapc)
+        for (uint32_t j = 0; j < soundSize; j = j + bapc)
         {
             int32_t base = (int32_t) TakeValue(mx);
             int32_t adder = (int32_t) TakeValue(dt);
@@ -60,7 +59,7 @@ uint32_t AudioMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
     bool pass = false;
     while(!pass) {
         pass = true;
-        for (auto &reader: readers) {
+        for (const auto &reader: readers) {
             if (!reader.second.SizeLeft()) {
                 readers.erase(reader.first);
                 pass = false;
@@ -78,11 +77,11 @@ uint32_t AudioMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
     return maxSize;
 }
 
-int32_t AudioMixer::AddSound(std::string fileName)
+int32_t SoundMixer::AddSound(std::string fileName)
 {
     std::unique_lock<std::mutex> lock(mtSoundReaders);
 
-    auto it = readers.emplace(nextHandle, audioreader::AudioReader(nextHandle));
+    auto it = readers.emplace(nextHandle, soundreader::SoundReader(nextHandle));
     if (it.second && it.first->second.Open(fileName, nextHandle))
     {
         auto& ar = it.first->second;
@@ -119,25 +118,25 @@ int32_t AudioMixer::AddSound(std::string fileName)
     return INVALID_HANDLE;
 }
 
-void AudioMixer::RemoveSound(int32_t handle)
+void SoundMixer::RemoveSound(int32_t handle)
 {
     std::unique_lock<std::mutex> lock(mtSoundReaders);
     DeleteSound(handle);
 }
 
-double AudioMixer::SecLeft()
+double SoundMixer::SecLeft()
 {
     std::unique_lock<std::mutex> lock(mtSoundReaders);
     return fullSecondLeft;
 }
 
-uint32_t AudioMixer::SizeLeft()
+uint32_t SoundMixer::SizeLeft()
 {
     std::unique_lock<std::mutex> lock(mtSoundReaders);
     return fullSizeLeft;
 }
 
-int32_t AudioMixer::TakeValue(uint8_t* buf)
+int32_t SoundMixer::TakeValue(uint8_t* buf)
 {
     int32_t v = 0;
     uint32_t shift = 0;
@@ -158,7 +157,7 @@ int32_t AudioMixer::TakeValue(uint8_t* buf)
     return v;
 }
 
-void AudioMixer::PutValue(uint8_t* buf, int32_t value)
+void SoundMixer::PutValue(uint8_t* buf, int32_t value)
 {
     uint8_t* pVal = (uint8_t*) (&value);
     for (uint8_t i = 0; i < bapc; ++i)
@@ -174,7 +173,7 @@ void AudioMixer::PutValue(uint8_t* buf, int32_t value)
     }
 }
 
-void AudioMixer::DeleteSound(uint32_t idx)
+void SoundMixer::DeleteSound(uint32_t idx)
 {
     readers.erase(idx);
 }

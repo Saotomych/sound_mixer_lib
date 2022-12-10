@@ -1,23 +1,26 @@
-#include <audiomixer/src/audioreader.h>
-#include <audiomixer/wav_header.h>
+#include <soundmixer/src/soundreader.h>
+#include <soundmixer/wav_header.h>
 
 #include <algorithm>
 #include <utility>
 
-using namespace audioreader;
+using namespace soundreader;
 
-AudioReader::AudioReader(int32_t handle): soundHandle(handle)
+// Length of the time slot of the mixed playing in seconds
+constexpr double timeSlotLen = 0.1;
+
+SoundReader::SoundReader(int32_t handle): soundHandle(handle)
 {
 }
 
-AudioReader::~AudioReader()
+SoundReader::~SoundReader()
 {
-    PlatformCloseAudioFile(soundHandle);
+    PlatformCloseSoundFile(soundHandle);
 }
 
-bool AudioReader::Open(std::string filename, int32_t handle)
+bool SoundReader::Open(std::string filename, int32_t handle)
 {
-    handle = PlatformOpenAudioFile(filename.c_str(), handle);
+    handle = PlatformOpenSoundFile(filename.c_str(), handle);
     if (handle != INVALID_HANDLE)
     {
         bool res = PlatformReadWavHeader(handle, wHeader);
@@ -25,7 +28,7 @@ bool AudioReader::Open(std::string filename, int32_t handle)
             return false;
 
         // set vector sizes for 0,1 sec of playing
-        uint32_t sz = wHeader.byteRate * 0.1;
+        uint32_t sz = wHeader.byteRate * timeSlotLen;
         uint32_t bapc = wHeader.blockAlign / wHeader.numChannels;
         blockLen = sz / bapc * bapc;
         bytesLeft = wHeader.subchunk2Size;
@@ -39,7 +42,7 @@ bool AudioReader::Open(std::string filename, int32_t handle)
     return false;
 }
 
-bool AudioReader::NextDataBlock(uint8_t*& buffer, uint32_t& size)
+bool SoundReader::NextDataBlock(uint8_t*& buffer, uint32_t& size)
 {
     if (blockLen)
     {
@@ -63,17 +66,17 @@ bool AudioReader::NextDataBlock(uint8_t*& buffer, uint32_t& size)
     return false;
 }
 
-double AudioReader::FullTime() const
+double SoundReader::FullTime() const
 {
     return seconds;
 }
 
-uint32_t AudioReader::SizeLeft() const
+uint32_t SoundReader::SizeLeft() const
 {
     return bytesLeft;
 }
 
-const WavHeader& AudioReader::Header() const
+const WavHeader& SoundReader::Header() const
 {
     return wHeader;
 }

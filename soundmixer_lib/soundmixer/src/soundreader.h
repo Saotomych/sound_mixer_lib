@@ -1,25 +1,25 @@
-#ifndef AUDIO_READER_H
-#define AUDIO_READER_H
+#ifndef SOUND_READER_H
+#define SOUND_READER_H
 
-#include <audiomixer/wav_header.h>
-#include <include/audio_platform.h>
+#include <soundmixer/wav_header.h>
+#include <include/platform_deps.h>
 
 #include <vector>
 #include <string>
 
-namespace audioreader
+namespace soundreader
 {
 
-class AudioReader
+class SoundReader
 {
 public:
 
      /// @brief ctor
      /// @param [in] handle of the definite sound
-     AudioReader(int32_t handle);
+     SoundReader(int32_t handle);
 
      /// @brief dtor
-     ~AudioReader();
+     ~SoundReader();
 
      /// @brief Open wav file
      /// @param [in] filename Name of wav file
@@ -53,6 +53,6 @@ private:
     uint32_t bytesLeft = 0;
 };
 
-} // audioreader
+} // soundreader
 
-#endif // AUDIO_READER_H
+#endif // SOUND_READER_H

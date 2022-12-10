@@ -20,13 +20,36 @@ project(soundmixer VERSION 0.0.1 DESCRIPTION "Sound mixer library and environmen
 
 include(CTest)
 
-add_subdirectory(audiomixer_lib)
+add_subdirectory(soundmixer_lib)
+
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+    option(GIT_SUBMODULE "Check submodules during build" ON)
+    if(GIT_SUBMODULE)
+        message(STATUS "Submodule update")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
+    endif()
+endif()
+
 
 if(DEFINED SOUNDMIXER_BUILD_DEMO_LIB AND SOUNDMIXER_BUILD_DEMO_LIB MATCHES ON)
-    add_subdirectory(demo)
+    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third_party/rapidjson/CMakeLists.txt")
+        message(FATAL_ERROR "The submodule 'rapidjson' was not downloaded!")
+    else()
+        add_subdirectory(demo)
+    endif()
 endif()
 
 if(DEFINED SOUNDMIXER_BUILD_TEST_LIB AND SOUNDMIXER_BUILD_TEST_LIB MATCHES ON)
-    add_subdirectory(third_party/gtest)
-    add_test(NAME MixTest COMMAND "${BIN_OUT_DIR}/soundmixer_test")
+    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third_party/gtest/CMakeLists.txt")
+        message(FATAL_ERROR "The submodule 'gtest' was not downloaded!")
+    else()
+        add_subdirectory(third_party/gtest)
+        add_test(NAME MixTest COMMAND "${BIN_OUT_DIR}/soundmixer_test")
+    endif()
 endif()

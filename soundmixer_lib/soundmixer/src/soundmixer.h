@@ -1,20 +1,21 @@
-#ifndef AUDIO_MIXER_H
-#define AUDIO_MIXER_H
+#ifndef SOUND_MIXER_H
+#define SOUND_MIXER_H
+
+#include <soundmixer/src/soundreader.h>
 
 #include <string>
 #include <mutex>
 #include <unordered_map>
 
-#include <audiomixer/src/audioreader.h>
 
-namespace audiomixer
+namespace soundmixer
 {
 
-class AudioMixer
+class SoundMixer
 {
 public:
      
-     AudioMixer(): nextHandle(0), fullSecondLeft(0.), fullSizeLeft(0)
+     SoundMixer(): nextHandle(0), fullSecondLeft(0.), fullSizeLeft(0)
      {}
      
      uint32_t GetMixedBuffer(uint8_t* mixedData, uint32_t length);
@@ -28,7 +29,7 @@ public:
      uint32_t SizeLeft();
 
 private:
-    std::unordered_map<uint32_t, audioreader::AudioReader> readers;
+    std::unordered_map<uint32_t, soundreader::SoundReader> readers;
     std::mutex mtSoundReaders;
 
     uint16_t ba;   // block align
@@ -46,6 +47,6 @@ private:
 
 };
 
-} // audiomixer
+} // soundmixer
 
-#endif // AUDIO_MIXER_H
+#endif // SOUND_MIXER_H

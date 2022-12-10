@@ -6,7 +6,7 @@ set(TARGET_NAME soundmixer)
 set(LOCAL_LIB_OUT_DIR "../${LIB_OUT_DIR}")
 set(LOCAL_BIN_OUT_DIR "../${BIN_OUT_DIR}")
 
-project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Embedded audio mixer")
+project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Sound mixer library")
 
 if(DEFINED SOUNDMIXER_BUILD_SHARED_LIB)
     set(BUILD_SHARED_LIBS ${SOUNDMIXER_BUILD_SHARED_LIB})
@@ -19,14 +19,14 @@ target_compile_features(${TARGET_NAME} PRIVATE cxx_std_11)
 target_include_directories(${TARGET_NAME} PRIVATE .)
 
 set(public_headers
-    include/audiomixer_api.h
-    include/audio_platform.h)
+    include/soundmixer_api.h
+    include/platform_deps.h)
 
 set(sources
     ${public_headers}
-    audiomixer/src/audioapi.cpp
-    audiomixer/src/audiomixer.cpp
-    audiomixer/src/audioreader.cpp)
+    soundmixer/src/soundmixer_api.cpp
+    soundmixer/src/soundmixer.cpp
+    soundmixer/src/soundreader.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${sources})
 

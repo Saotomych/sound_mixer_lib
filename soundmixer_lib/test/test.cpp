@@ -1,5 +1,5 @@
-#include <include/audiomixer_api.h>
-#include <include/audio_platform.h>
+#include <include/soundmixer_api.h>
+#include <include/platform_deps.h>
 
 #include <vector>
 #include <unordered_map>
@@ -41,7 +41,7 @@ std::unordered_map<std::string, std::vector<uint8_t>> testDataSet3 = {
 // Environment of the callbacks from the soundmixer
 
 // Call the callback to fill mixedResult
-cbFn userFn = nullptr;
+cbGetMixedData userFn = nullptr;
 // with the user context
 void* userCtx = nullptr;
 
@@ -60,7 +60,7 @@ uint32_t PlatformFileSizeLeft(int32_t handle)
 }
 
 extern "C"
-int32_t PlatformOpenAudioFile(const char* fileName, int32_t handle)
+int32_t PlatformOpenSoundFile(const char* fileName, int32_t handle)
 {
     rawStreams[handle] = testSet.get()[fileName];
     streamSizes[handle] = rawStreams[handle].size();
@@ -68,7 +68,7 @@ int32_t PlatformOpenAudioFile(const char* fileName, int32_t handle)
 }
 
 extern "C"
-void PlatformCloseAudioFile(int32_t handle)
+void PlatformCloseSoundFile(int32_t handle)
 {
     rawStreams.erase(handle);
 }
@@ -101,7 +101,7 @@ bool PlatformReadWavHeader(int32_t handle, WavHeader& header)
 }
 
 extern "C"
-bool PlatformOpenDevice(const WavHeader*, cbFn fn, void *cbUserCtx)
+bool PlatformOpenDevice(const WavHeader*, cbGetMixedData fn, void *cbUserCtx)
 {
     userFn = fn;
     userCtx = cbUserCtx;
@@ -151,14 +151,14 @@ public:
 
 TEST_P(MixingTest, Mix4DataBlocks)
 {
-    using namespace audiomixer;
+    using namespace soundmixer;
 
     TestSet set = GetParam();
     blockAlign = set.blockAlign;
     bitsPerSample = set.bitsPerSample;
     testSet = set.dataSet;
 
-    AudioMixerApi sndMix;
+    SoundMixerApi sndMix;
     int32_t hndl[4];
     EXPECT_NO_THROW(hndl[0] = sndMix.PlaySound("data-1"));
     EXPECT_NO_THROW(hndl[1] = sndMix.PlaySound("data-2"));

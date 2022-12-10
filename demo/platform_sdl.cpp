@@ -5,12 +5,12 @@
 #include <SDL2/SDL.h>
 #include <sdl/include/audio.h>
 
-#include <include/audio_platform.h>
+#include <include/platform_deps.h>
 
 namespace {
     std::unordered_map <int32_t, std::ifstream> files;
     SDL_AudioSpec wanted;
-    cbFn userFn = nullptr;
+    cbGetMixedData userFn = nullptr;
 
     uint8_t *actualSound = nullptr;
     uint32_t actualLen = 0;
@@ -34,7 +34,7 @@ uint32_t PlatformFileSizeLeft(int32_t handle)
 }
 
 extern "C"
-int32_t PlatformOpenAudioFile(const char* fileName, int32_t handle)
+int32_t PlatformOpenSoundFile(const char* fileName, int32_t handle)
 {
      if (files.find(handle) == files.end())
          files.emplace(handle, std::ifstream());
@@ -58,7 +58,7 @@ int32_t PlatformOpenAudioFile(const char* fileName, int32_t handle)
 }
 
 extern "C"
-void PlatformCloseAudioFile(int32_t handle)
+void PlatformCloseSoundFile(int32_t handle)
 {
      if (files[handle].is_open())
           files[handle].close();
@@ -116,7 +116,8 @@ bool PlatformReadWavHeader(int32_t handle, WavHeader& header)
 }
 
 extern "C"
-bool PlatformOpenDevice(const WavHeader* wavHeader, cbFn fn, void* cbUserData)
+bool PlatformOpenDevice(const WavHeader* wavHeader, 
+    cbGetMixedData fn, void* cbUserData)
 {
      if (SDL_Init(SDL_INIT_AUDIO) < 0)
      {

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <sys/stat.h>
 
-#include <audiomixer_lib/include/audiomixer_api.h>
+#include <soundmixer_lib/include/soundmixer_api.h>
 #include <demo/cl_parser.hpp>
 
 #include <rapidjson/document.h>
@@ -246,36 +246,36 @@ int main(int argc, char** argv)
             "." << (startDelays[i] % 10) << " seconds" << std::endl;
     }
 
-     audiomixer::AudioMixerApi sndMixer;
+    soundmixer::SoundMixerApi sndMixer;
 
-     int timer = 0;
-     double lastTime = 0.;
+    int timer = 0;
+    double lastTime = 0.;
 
-     std::cout << std::fixed;
+    std::cout << std::fixed;
 
-     do{
+    do{
 
-          for (uint32_t i=0; i < sounds.size(); ++i) 
-          {
-               if (timer == startDelays[i])
-               {
-                    std::cout << "start " << i << " sound" << std::endl;
-                    sndMixer.PlaySound(sounds[i]);
+        for (uint32_t i=0; i < sounds.size(); ++i) 
+        {
+            if (timer == startDelays[i])
+            {
+                std::cout << "start " << i << " sound" << std::endl;
+                sndMixer.PlaySound(sounds[i]);
 
-                    if ( lastTime < sndMixer.LeftTime() )
-                         lastTime = sndMixer.LeftTime();
-               }
-          }
+                if ( lastTime < sndMixer.LeftTime() )
+                    lastTime = sndMixer.LeftTime();
+            }
+        }
 
-          std::cout.precision(2);
-          std::cout << "- !new step! - Timer: " << ((double)(timer)/10) << "; left " << lastTime << " secs" << std::endl;
-          std::cout.precision(5);
+        std::cout.precision(2);
+        std::cout << "- !new step! - Timer: " << ((double)(timer)/10) << "; left " << lastTime << " secs" << std::endl;
+        std::cout.precision(5);
 
-          sndMixer.DelayPlay(100);
-          ++timer;
-          lastTime -= 0.1;
-     } while ( lastTime > 0 );
+        sndMixer.DelayPlay(100);
+        ++timer;
+        lastTime -= 0.1;
+    } while ( lastTime > 0 );
 
-     sndMixer.DelayPlay(100);
-     sndMixer.BreakPlay();
+    sndMixer.DelayPlay(100);
+    sndMixer.BreakPlay();
 }

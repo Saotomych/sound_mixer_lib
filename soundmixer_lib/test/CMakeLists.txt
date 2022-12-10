@@ -8,7 +8,7 @@ set(LOCAL_LIB_OUT_DIR "../../${LIB_OUT_DIR}")
 project(${TARGET_NAME} 
     VERSION 0.0.1 
     LANGUAGES CXX
-    DESCRIPTION "Tests for audio mixer library")
+    DESCRIPTION "Tests for sound mixer library")
 
 include_directories(.. ../../third_party/gtest/googletest/include)
 link_directories(LOCAL_LIB_OUT_DIR)
