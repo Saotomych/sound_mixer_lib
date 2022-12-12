@@ -25,7 +25,6 @@ soundmixer_lib/CTestTestfile.cmake
 soundmixer_lib/Doxyfile
 soundmixer_lib/Makefile
 soundmixer_lib/cmake_install.cmake
-soundmixer_lib/include/
 soundmixer_lib/test/CMakeFiles/
 soundmixer_lib/test/CTestTestfile.cmake
 soundmixer_lib/test/Makefile
