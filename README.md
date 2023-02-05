@@ -94,3 +94,9 @@ speeds changes to the actual sample values
         float rel_samp = (a + b) / (1 + (a * b) / light speed);
         out_buf[i] = rel_samp;
     }
+
+### License information
+
+Library and demo software licensed under Creative Commons Zero v 1.0
+
+SDL2.0 API used in demo software and licensed under the Apache License, Version 2.0

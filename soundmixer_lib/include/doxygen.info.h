@@ -95,4 +95,10 @@
  * }
  *
  * @endcode  
+ *
+ * \section work_sec  License information
+ *
+ * Library and demo software licensed under Creative Commons Zero v 1.0.
+ * SDL2.0 API used in demo software and licensed under the Apache License, Version 2.0.
+ *
  */
