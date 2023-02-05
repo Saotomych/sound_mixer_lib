@@ -62,14 +62,14 @@ uint32_t PlatformReadFile(int32_t handle, char* buffer, uint32_t size);
 bool PlatformReadWavHeader(int32_t handle, WavHeader& header);
 
 /// @fn PlatformOpenDevice(const WavHeader *wavHeader, 
-///    cbGetMixedData fn, void *cbUserCtx)
+///     cbGetMixedData fn, void *cbUserCtx)
 /// @brief Initialize a user sound hardware.
 /// @details Can be called every time when the PlaySound function performs for
 /// the first sound file.
 /// @param [in] wavHeader sound data to initialize hardware
 /// @param [in] fn function to get mixed data for the next data block set
 /// @param [in] cbUserCtx user context for the fn
-/// @param [in] return true when the hardware is ready to work
+/// @return true when the hardware is ready to work
 bool PlatformOpenDevice(const WavHeader *wavHeader, 
     cbGetMixedData fn, void *cbUserCtx);
 

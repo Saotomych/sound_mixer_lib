@@ -22,7 +22,7 @@ namespace soundmixer {
         ~SoundMixerApi();
 
         /// @brief Start playing by filename
-        /// @param [in] filename Sound file name
+        /// @param [in] fileName Sound file name
         /// @return Sound handle
         /// @throw std::invalid_argument when file not found
         int32_t PlaySound(std::string fileName);

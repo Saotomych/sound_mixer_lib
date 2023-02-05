@@ -33,7 +33,7 @@
  * a command: make install.
  * As default, library builds to ./lib. Meanwhile, demo binary builds to ./bin.
  *
- * \section install_sec Integration to your project
+ * \section integration_sec Integration to your project
  * 
  * For work with your project environment, you need to implement set of 
  * functions supporting your platform dependencies. 
@@ -96,9 +96,10 @@
  *
  * @endcode  
  *
- * \section work_sec  License information
+ * \section license_sec License information
  *
  * Library and demo software licensed under Creative Commons Zero v 1.0.
+ *
  * SDL2.0 API used in demo software and licensed under the Apache License, Version 2.0.
  *
  */
