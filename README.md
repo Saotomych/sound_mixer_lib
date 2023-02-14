@@ -21,11 +21,11 @@ Using CMake environment variables is needed to build the library for your platfo
 Building system also uses its own additional CMake options for settings:
  * SOUNDMIXER_BUILD_SHARED_LIB - Build a shared library (.dll/.so) instead of 
 static one (.lib/.a). Default: OFF.
- * SOUNDMIXER_BUILD_DEBUG_LIB - Build debug version of the library. 
-Default: OFF.
+ * SOUNDMIXER_BUILD_DEBUG_LIB - Build debug version of the library. Default: OFF.
  * SOUNDMIXER_BUILD_TEST_LIB - Build unit tests. Default: ON.
  * SOUNDMIXER_BUILD_DEMO_LIB - Build a demo application. Default: ON.
  * SOUNDMIXER_BUILD_DOCS_LIB - Build documentation. Default: ON.
+ * SOUNDMIXER_MULTITHREAD_LIB - Build the Library with multithreading support. Default: ON.
 
 CMake provides tool for installing the library to your system automatically with 
 a command: make install.

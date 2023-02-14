@@ -9,6 +9,12 @@
 #include <cassert>
 #include <memory>
 
+#ifdef MULTITHREADING_ON
+#define LOCAL_LOCK_GUARD(Type, Mutex) std::lock_guard<Type> lock(Mutex);
+#else
+#define LOCAL_LOCK_GUARD(Type, SyncM)
+#endif
+
 namespace
 {
     uint32_t platformCbFn(void* udata, uint8_t* buffer, int size)
@@ -25,7 +31,7 @@ uint32_t SoundMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
     if (!mixedData)
         return 0;
 
-    std::unique_lock<std::mutex> lock( mtSoundReaders );
+    LOCAL_LOCK_GUARD(std::mutex, mtSoundReaders);
     uint8_t* soundBuffer = nullptr;
     uint32_t soundSize = 0;
     uint32_t maxSize = soundSize;
@@ -79,7 +85,7 @@ uint32_t SoundMixer::GetMixedBuffer(uint8_t* mixedData, uint32_t length)
 
 int32_t SoundMixer::AddSound(std::string fileName)
 {
-    std::unique_lock<std::mutex> lock(mtSoundReaders);
+    LOCAL_LOCK_GUARD(std::mutex, mtSoundReaders);
 
     auto it = readers.emplace(nextHandle, soundreader::SoundReader(nextHandle));
     if (it.second && it.first->second.Open(fileName, nextHandle))
@@ -120,19 +126,19 @@ int32_t SoundMixer::AddSound(std::string fileName)
 
 void SoundMixer::RemoveSound(int32_t handle)
 {
-    std::unique_lock<std::mutex> lock(mtSoundReaders);
+    LOCAL_LOCK_GUARD(std::mutex, mtSoundReaders);
     DeleteSound(handle);
 }
 
 double SoundMixer::SecLeft()
 {
-    std::unique_lock<std::mutex> lock(mtSoundReaders);
+    LOCAL_LOCK_GUARD(std::mutex, mtSoundReaders);
     return fullSecondLeft;
 }
 
 uint32_t SoundMixer::SizeLeft()
 {
-    std::unique_lock<std::mutex> lock(mtSoundReaders);
+    LOCAL_LOCK_GUARD(std::mutex, mtSoundReaders);
     return fullSizeLeft;
 }
 

@@ -5,6 +5,7 @@ option(SOUNDMIXER_BUILD_DEBUG_LIB "Build debug version of the library" OFF)
 option(SOUNDMIXER_BUILD_TEST_LIB "Build unit tests" ON)
 option(SOUNDMIXER_BUILD_DEMO_LIB "Build demo application" ON)
 option(SOUNDMIXER_BUILD_DOCS_LIB "Build documentation" ON)
+option(SOUNDMIXER_MULTITHREAD_LIB "Build the Library with multithreading support" ON)
 
 set(SOUNDMIXER_BUILD_SHARED_LIB OFF)
 set(SOUNDMIXER_BUILD_DEBUG_LIB ON)

@@ -28,7 +28,8 @@
  * - SOUNDMIXER_BUILD_TEST_LIB - Build unit tests. Default: ON.
  * - SOUNDMIXER_BUILD_DEMO_LIB - Build demo application. Default: ON.
  * - SOUNDMIXER_BUILD_DOCS_LIB - Build documentation. Default: ON.
- *
+ * - SOUNDMIXER_MULTITHREAD_LIB - Build the Library with multithreading support.
+ * Default: ON.
  * CMake provides tool to install library to your system automatically with 
  * a command: make install.
  * As default, library builds to ./lib. Meanwhile, demo binary builds to ./bin.
