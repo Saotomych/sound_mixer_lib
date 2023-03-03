@@ -17,8 +17,10 @@
 /// the mixed sound getting
 typedef uint32_t(*cbGetMixedData)(void*, uint8_t*, int);
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
 
 /// @fn PlatformFileSizeLeft(int32_t handle)
 /// @brief Ask rest size of file by handle.
@@ -101,6 +103,8 @@ void PlatformBreakPlay();
 /// @param [in] ms playing time in ms
 void PlatformDelayPlay(uint32_t ms);
 
+#ifdef __cplusplus
 }
+#endif
 
 #endif // PLATFORM_DEPS_H
